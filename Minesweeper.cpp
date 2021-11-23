@@ -53,7 +53,7 @@ void SetColor(WORD color)
 
 void main()
 {
-	gotoxy(13, 13);
+	gotoxy(15, 15);
 	SetColor(13);
 	SetBGColor(14);
 	cout << "hello";
