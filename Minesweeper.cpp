@@ -1,63 +1,36 @@
 #include <iostream>
-#include <windows.h>
-#include <conio.h>
+
 using namespace std;
 
-void SetBGColor(WORD color)
+#include "Init.h"
+#include "Command.h"
+#include "Display.h"
+
+void GamePlay()
 {
-	HANDLE hConsoleOutput;
-	hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	CONSOLE_SCREEN_BUFFER_INFO screen_buffer_info;
-	GetConsoleScreenBufferInfo(hConsoleOutput, &screen_buffer_info);
-
-	WORD wAttributes = screen_buffer_info.wAttributes;
-	color &= 0x000f;
-	color <<= 4;
-	wAttributes &= 0xff0f;
-	wAttributes |= color;
-
-	SetConsoleTextAttribute(hConsoleOutput, wAttributes);
+    int Board[100][100], isMine[100][100], row, col, Mines, isFlag[100][100];
+    bool isFlip[100][100];
+    Init(Board, row, col, Mines, isFlip, isMine, isFlag);
+    int GameOver = 0;
+    while (!GameOver)
+    {
+        Command(Board, row, col, Mines, isFlip, isMine, isFlag, GameOver);
+        //Display();
+        if (GameOver == 1) cout << "\n\nU lose";
+        if (GameOver == 2) cout << "\n\nU win";
+    }
 }
 
-void clrscr(void)
+int main()
 {
-	system("cls");
+    int c;
+    while (1)
+        {   cout << "Welcome to Minesweeper made by MinhGiang & HoaiNam\n";
+            cout << "1. Play game\n2. Exit\nPlease input 1 or 2:\n";
+            cin >> c;
+            if (c == 2) {cout << "See u again!! :>"; break;}
+            GamePlay();
+        }
+    return 0;
 }
 
-void gotoxy(short x, short y)
-{
-	HANDLE hConsoleOutput;
-	COORD Cursor_an_Pos = { x,y };
-	hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(hConsoleOutput, Cursor_an_Pos);
-}
-
-void SetColor(WORD color)
-{
-	HANDLE hConsoleOutput;
-	hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	CONSOLE_SCREEN_BUFFER_INFO screen_buffer_info;
-	GetConsoleScreenBufferInfo(hConsoleOutput, &screen_buffer_info);
-
-	WORD wAttributes = screen_buffer_info.wAttributes;
-	color &= 0x000f;
-	wAttributes &= 0xfff0;
-	wAttributes |= color;
-
-	SetConsoleTextAttribute(hConsoleOutput, wAttributes);
-}
-
-
-
-void main()
-{
-	gotoxy(15, 15);
-	SetColor(5);
-	SetBGColor(14);
-	cout << "hello";
-	_getch();
-	SetBGColor(1);
-	clrscr();
-}
