@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <chrono>
 
+#define MAX_SIZE 100
+
 using namespace std;
 
 #include "Init.h"
@@ -10,25 +12,26 @@ using namespace std;
 #include "Display.h"
 #include "consoletext.h"
 
+struct Grid;
+
 void GamePlay()
 {
-    int Board[100][100], isMine[100][100], row, col, Mines, isFlag[100][100];
-    bool isFlip[100][100];
-    memset(Board, 0, sizeof Board);
-    memset(isMine, 0, sizeof isMine);
-    memset(isFlag, 0, sizeof isFlag);
-    memset(isFlip, 0, sizeof isFlip);
-    Init(Board, row, col, Mines, isFlip, isMine, isFlag);
-    int GameOver = 0, ValidCells = row * col - Mines;
+    Grid Board;
+    memset(Board.Board, 0, sizeof Board.Board);
+    memset(Board.isMine, 0, sizeof Board.isMine);
+    memset(Board.isFlag, 0, sizeof Board.isFlag);
+    memset(Board.isFlip, 0, sizeof Board.isFlip);
+    Init(Board);
+    int GameOver = 0, ValidCells = Board.row * Board.col - Board.Mines;
     auto start = chrono::steady_clock::now();
     chrono::duration<double> elapsed_seconds;
     while (!GameOver)
     {
-        DisplayBoard(Board, row, col, Mines, isFlip, isMine, isFlag);
-        Command(Board, row, col, Mines, isFlip, isMine, isFlag, GameOver, ValidCells);
+        DisplayBoard(Board);
+        Command(Board, GameOver, ValidCells);
         if (GameOver)
         {
-            DisplayBoard(Board, row, col, Mines, isFlip, isMine, isFlag);
+            DisplayBoard(Board);
             if (GameOver == 1) cout << "\nU lose\n";
             else {
                 auto end = chrono::steady_clock::now();
