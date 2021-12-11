@@ -1,15 +1,15 @@
 #ifndef COMMAND_H_INCLUDED
 #define COMMAND_H_INCLUDED
 
-void Command(int (&Board)[100][100], int &row, int &col, int &Mines, bool (&isFlip)[100][100],
-             int (&isMine)[100][100], int (&isFlag)[100][100], int &GameOver, int &ValidCells);
-void InputCommand(int &Type, int &row, int &col, int &x, int &y);
-void Flip(int (&Board)[100][100], int &row, int &col, int x, int y, int &Mines, bool (&isFlip)[100][100],
-                  int (&isMine)[100][100], int (&isFlag)[100][100], int &GameOver, int &ValidCells);
-void Flag(int (&Board)[100][100], int &row, int &col, int &Mines, bool (&isFlip)[100][100],
-                  int (&isMine)[100][100], int (&isFlag)[100][100]);
-void FlipAround(int (&Board)[100][100], int &row, int &col, int x, int y, int &Mines, bool (&isFlip)[100][100],
-                  int (&isMine)[100][100], int (&isFlag)[100][100], int &GameOver, int &ValidCells);
-bool isInBoard(int &row, int &col, int x, int y);
+#define MAX_SIZE 100
+
+struct Grid;
+
+void Command(Grid &Board, int &GameOver, int &ValidCells);
+void InputCommand(int &Type, Grid &Board, int &x, int &y);
+void Flip(Grid &Board,int x, int y, int &GameOver, int &ValidCells);
+void Flag(Grid &Board, int x, int y);
+void FlipAround(Grid &Board, int x, int y, int &GameOver, int &ValidCells);
+void FlipAllMines(Grid &Board);
 
 #endif // COMMAND_H_INCLUDED

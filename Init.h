@@ -1,11 +1,18 @@
 #ifndef INIT_H_INCLUDED
 #define INIT_H_INCLUDED
 
-void Init(int (&Board)[100][100], int &row, int &col, int &Mines, bool (&isFlip)[100][100], int (&isMine)[100][100], int (&isFlag)[100][100]);
-void SetDif(int &row, int &col, int &Mines);
-void RanMines(int (&Board)[100][100], int &row, int &col, int &Mines);
-//void Display(int (&Board)[100][100], int &row, int &col);
-void BoardSetup(int (&Board)[100][100], int &row, int &col, int (&isMine)[100][100]);
-bool isInBoard(int &row, int &col, int x, int y);
+#define MAX_SIZE 100
+
+struct Grid {
+    int Board[MAX_SIZE][MAX_SIZE], isMine[MAX_SIZE][MAX_SIZE], row = 0, col = 0, Mines = 0,
+        isFlag[MAX_SIZE][MAX_SIZE];
+    bool isFlip[MAX_SIZE][MAX_SIZE];
+};
+
+void Init(Grid& Board);
+void SetDif(Grid (&Board));
+void RanMines(Grid (&Board));
+void BoardSetup(Grid (&Board));
+bool isInBoard(Grid (&Board), int x, int y);
 
 #endif // INIT_H_INCLUDED
