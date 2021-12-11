@@ -11,7 +11,8 @@ void Command(Grid &Board, int &GameOver, int &ValidCells)
     if (Type == 1) Flip(Board, x, y, GameOver, ValidCells);
     else if (Type == 2) FlipAround(Board, x, y, GameOver, ValidCells);
     else Flag(Board, x, y);
-    if (Board.Mines == 0 || ValidCells == 0) GameOver = 2;
+    if (GameOver == 1) return;
+    if (ValidCells == 0) GameOver = 2;
 }
 
 void InputCommand(int &Type, Grid &Board, int &x, int &y)
@@ -59,4 +60,15 @@ void Flag(Grid &Board, int x, int y)
     if (Board.isFlag[x][y]) Board.Mines -= Board.isMine[x][y];
         else Board.Mines += Board.isMine[x][y];
     Board.isFlag[x][y] = !Board.isFlag[x][y];
+}
+
+void FlipAllMines(Grid &Board)
+{
+    for (int i = 0; i < Board.row; i++)
+        for (int j = 0; j < Board.col; j++)
+            if (Board.isMine[i][j])
+            {
+                Board.isFlag[i][j] = 0;
+                Board.isFlip[i][j] = 1;
+            }
 }

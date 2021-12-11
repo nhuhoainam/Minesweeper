@@ -31,12 +31,13 @@ void GamePlay()
         Command(Board, GameOver, ValidCells);
         if (GameOver)
         {
+            FlipAllMines(Board);
             DisplayBoard(Board);
-            if (GameOver == 1) cout << "\nU lose\n";
+            if (GameOver == 1) cout << "\nYou lose\n";
             else {
                 auto end = chrono::steady_clock::now();
                 elapsed_seconds = end - start;
-                cout << "\nU win (" << fixed << setprecision(1) << elapsed_seconds.count() << "seconds)\n"; 
+                cout << "\nYou win (" << fixed << setprecision(1) << elapsed_seconds.count() << "seconds)\n";
             }
             Sleep(1000);
             system("pause");

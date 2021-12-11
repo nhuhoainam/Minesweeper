@@ -11,8 +11,13 @@ using namespace std;
 
 void Init(Grid &Board)
 {
+<<<<<<< HEAD
     for (int i = 0; i < Board.row; i++)
         for (int j = 0; j < Board.col; j++)
+=======
+    for (int i = 0; i < MAX_SIZE; i++)
+        for (int j = 0; j < MAX_SIZE; j++)
+>>>>>>> 503a914e02f19bc431d8a172c950bc0da55acece
             Board.Board[i][j] = Board.isFlip[i][j] = Board.isMine[i][j] = Board.isFlag[i][j] = 0;
     SetDif(Board);
     RanMines(Board);
@@ -39,7 +44,11 @@ void RanMines(Grid &Board)
     for (int i = 0; i < Board.col * Board.row; i++) num.push_back(i);
     unsigned rd = chrono::system_clock::now().time_since_epoch().count();
     shuffle(num.begin(), num.end(), default_random_engine(rd));
+<<<<<<< HEAD
     for (int i = 0; i < Board.Mines; i++) Board.Board[num[i] / Board.col][num[i] % Board.col]++;
+=======
+    for (int i = 0; i < Board.Mines; i++) Board.isMine[num[i] / Board.col][num[i] % Board.col]++;
+>>>>>>> 503a914e02f19bc431d8a172c950bc0da55acece
 }
 
 void BoardSetup(Grid &Board)
