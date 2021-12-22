@@ -5,7 +5,7 @@
 
 struct Grid {
     int Board[MAX_SIZE][MAX_SIZE], isMine[MAX_SIZE][MAX_SIZE], row = 0, col = 0, Mines = 0,
-        isFlag[MAX_SIZE][MAX_SIZE];
+        isFlag[MAX_SIZE][MAX_SIZE], dif = 0;
     bool isFlip[MAX_SIZE][MAX_SIZE];
 };
 

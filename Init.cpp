@@ -26,9 +26,10 @@ void SetDif(Grid &Board)
     int r[] = {8, 16, 16}, c[] = {8, 16, 30}, Ms[] = {10, 40, 99};
     string lvname[] = {"1. Beginner", "2. Intermediate", "3. Expert"};
     for (int i = 0; i < 3; i++)
-        cout << lvname[i] << ": " << r[i] << " x " << c[i] << " " << Ms[i] << " Board.Mines\n";
+        cout << lvname[i] << ": " << r[i] << " x " << c[i] << " " << Ms[i] << " mines\n";
     int level;
     cin >> level;
+    Board.dif = level;
     level--;
     Board.row = r[level], Board.col = c[level], Board.Mines = Ms[level];
 }
