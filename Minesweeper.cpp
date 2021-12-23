@@ -15,111 +15,9 @@ using namespace std;
 #include "Display.h"
 #include "consoletext.h"
 
-struct Grid;
-
-void SaveNewScore(float time, Leaderboard& LB, int dif) {
-    switch(dif) {
-    case 1:
-        LB.Easy[LB.cntEasy++] = time;
-        sort(LB.Easy, LB.Easy + LB.cntEasy);
-        if (LB.cntEasy == 11)
-            LB.cntEasy--;
-        break;
-    case 2:
-        LB.Medium[LB.cntMed++] = time;
-        sort(LB.Medium, LB.Medium + LB.cntMed);
-        if (LB.cntMed == 11)
-            LB.cntMed--;
-        break;
-    case 3:
-        LB.Hard[LB.cntHard++] = time;
-        sort(LB.Hard, LB.Hard + LB.cntHard);
-        if (LB.cntHard == 11)
-            LB.cntHard--;
-        break;
-    }
-    ofstream fout;
-    fout.open("Leaderboard.txt");
-    fout << LB.cntEasy << ' ' << LB.cntMed << ' ' << LB.cntHard << endl;
-    for(int i = 0; i < LB.cntEasy; i++) {
-        fout << LB.Easy[i] << endl;
-    }
-    for(int i = 0; i < LB.cntMed; i++) {
-        fout << LB.Medium[i] << endl;
-    }
-    for(int i = 0; i < LB.cntHard; i++) {
-        fout << LB.Hard[i] << endl;
-    }
-    fout.close();
-}
-
-void GamePlay()
-{
-    Grid Board;
-    memset(Board.Board, 0, sizeof Board.Board);
-    memset(Board.isMine, 0, sizeof Board.isMine);
-    memset(Board.isFlag, 0, sizeof Board.isFlag);
-    memset(Board.isFlip, 0, sizeof Board.isFlip);
-    Init(Board);
-    int GameOver = 0, ValidCells = Board.row * Board.col - Board.Mines;
-    auto start = chrono::steady_clock::now();
-    chrono::duration<double> elapsed_seconds;
-    Leaderboard LB;
-    LoadLeaderboard(LB);
-    while (!GameOver)
-    {
-        DisplayBoard(Board);
-        Command(Board, GameOver, ValidCells);
-        if (GameOver)
-        {
-            FlipAllMines(Board);
-            DisplayBoard(Board);
-            if (GameOver == 1) cout << "\nYou lose\n";
-            else {
-                auto end = chrono::steady_clock::now();
-                elapsed_seconds = end - start;
-                cout << "\nYou win (" << fixed << setprecision(2) << elapsed_seconds.count() << "seconds)\n";
-                SaveNewScore(elapsed_seconds.count(), LB, Board.dif);
-            }
-            Sleep(1000);
-            system("pause");
-        }
-    }
-}
-
-void LoadLeaderboard(Leaderboard& LB) {
-    ifstream fin;
-    fin.open("Leaderboard.txt");
-    fin >> LB.cntEasy >> LB.cntMed >> LB.cntHard;
-    for(int i = 0; i < LB.cntEasy; i++) {
-        fin >> LB.Easy[i];
-    }
-    for(int i = 0; i < LB.cntMed; i++) {
-        fin >> LB.Medium[i];
-    }
-    for(int i = 0; i < LB.cntHard; i++) {
-        fin >> LB.Hard[i];
-    }
-    fin.close();
-}
-
-void SeeLeaderboard(Leaderboard& LB) {
-    LoadLeaderboard(LB);
-    system("cls");
-    cout << "Easy:\n";
-    for(int i = 0; i < LB.cntEasy; i++) {
-        cout << fixed << setprecision(2) << i+1 << ". " << LB.Easy[i] << " secs.\n";
-    }
-    cout << "Medium:\n";
-    for(int i = 0; i < LB.cntMed; i++) {
-        cout << fixed << setprecision(2) << i+1 << ". " << LB.Medium[i] << " secs.\n";
-    }
-    cout << "Hard:\n";
-    for(int i = 0; i < LB.cntHard; i++) {
-        cout << fixed << setprecision(2) << i+1 << ". " << LB.Hard[i] << " secs.\n";
-    }
-    system("pause");
-}
+bool PlayMenu();
+void NewGame(Grid& Board, int& GameOver, int& ValidCells);
+void GamePlay(Grid& Board, int& GameOver, int& ValidCells, float& elapsed_time);
 
 int main()
 {
@@ -135,10 +33,98 @@ int main()
             cout << "Welcome to Minesweeper made by MinhGiang & HoaiNam\n";
             cout << "1. Play game\n2. See Leaderboard\n3. Exit\nEnter a command:\n";
             cin >> c;
-            if (c == 2) {SeeLeaderboard(LB); continue;}
+            if (c == 1) while(!PlayMenu());
+            else if (c == 2) {SeeLeaderboard(LB); continue;}
             if (c == 3) {cout << "See u again!! :>"; break;}
-            GamePlay(); 
+            else {cout << "Invalid Command!"; continue;};
         }
     return 0;
 }
 
+bool PlayMenu() {
+    system("cls");
+    cout << "1. New game\n2. Load saved game\nEnter a command:\n";
+    int c;
+    cin >> c;
+    Grid Board;
+    int GameOver = 0, ValidCells;
+    float elapsed_time;
+    if(c == 1)
+        NewGame(Board, GameOver, ValidCells);
+    else if(c == 2) {
+        ifstream fin;
+        fin.open("Save.txt");
+        bool saved;
+        fin >> saved;
+        if (!saved) {
+            cout << "No saved game found!\n";
+            return false;
+        }
+        fin >> Board.dif >> Board.row >> Board.col >> Board.Mines >> ValidCells >> elapsed_time;
+        for (int i = 0; i < Board.row; i++) {
+            for (int j = 0; j < Board.col; j++) {
+                fin >> Board.Board[i][j];
+            }
+        }
+        for (int i = 0; i < Board.row; i++) {
+            for (int j = 0; j < Board.col; j++) {
+                fin >> Board.isMine[i][j];
+            }
+        }
+        for (int i = 0; i < Board.row; i++) {
+            for (int j = 0; j < Board.col; j++) {
+                fin >> Board.isFlag[i][j];
+            }
+        }
+        for (int i = 0; i < Board.row; i++) {
+            for (int j = 0; j < Board.col; j++) {
+                fin >> Board.isFlip[i][j];
+            }
+        }        
+        fin.close();
+        GamePlay(Board, GameOver, ValidCells, elapsed_time);
+        return true;
+    }
+}
+
+void NewGame(Grid& Board, int& GameOver, int& ValidCells) {
+    memset(Board.Board, 0, sizeof Board.Board);
+    memset(Board.isMine, 0, sizeof Board.isMine);
+    memset(Board.isFlag, 0, sizeof Board.isFlag);
+    memset(Board.isFlip, 0, sizeof Board.isFlip);
+    Init(Board);
+    GameOver = 0, ValidCells = Board.row * Board.col - Board.Mines;
+    float elapsed_time = 0;
+    GamePlay(Board, GameOver, ValidCells, elapsed_time);
+}
+
+void GamePlay(Grid& Board, int& GameOver, int& ValidCells, float& elapsed_time)
+{
+    Leaderboard LB;
+    LoadLeaderboard(LB);
+    auto start = chrono::steady_clock::now();
+    while (!GameOver)
+    {
+        DisplayBoard(Board);
+        if (!Command(Board, GameOver, ValidCells, start)) break;
+        if (GameOver)
+        {
+            FlipAllMines(Board);
+            DisplayBoard(Board);
+            if (GameOver == 1) cout << "\nYou lose\n";
+            else {
+                auto end = chrono::steady_clock::now();
+                chrono::duration<double> elapsed_seconds = end - start;
+                elapsed_time += elapsed_seconds.count();
+                cout << "\nYou win (" << fixed << setprecision(2) << elapsed_time << "seconds)\n";
+                SaveNewScore(elapsed_time, LB, Board.dif);
+                ofstream fout;
+                fout.open("Save.txt");
+                fout << 0;
+                fout.close();
+            }
+            Sleep(1000);
+            system("pause");
+        }
+    }
+}

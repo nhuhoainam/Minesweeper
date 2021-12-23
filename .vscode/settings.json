@@ -4,6 +4,9 @@
         "xiosbase": "cpp",
         "ios": "cpp",
         "iomanip": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "algorithm": "cpp",
+        "iosfwd": "cpp",
+        "fstream": "cpp"
     }
 }
