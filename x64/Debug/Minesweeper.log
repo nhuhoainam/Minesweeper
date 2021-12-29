@@ -1,3 +1,2 @@
 ﻿  Minesweeper.cpp
-C:\C++lib\Minesweeper\Minesweeper.cpp(55,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
   Minesweeper.vcxproj -> C:\C++lib\Minesweeper\x64\Debug\Minesweeper.exe
